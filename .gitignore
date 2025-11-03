@@ -1,12 +1,7 @@
-# OS
 .DS_Store
-
-# Node/JS
 node_modules/
 dist/
 build/
-
-# IDEs
 .vscode/
 .idea/
 .vs/
