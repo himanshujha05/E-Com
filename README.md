@@ -6,7 +6,7 @@ This project features product listings, shopping cart functionality, and categor
 ---
 
 ## 🚀 Featuress
-- 🏠 Home page with hero section, popular products, and special offers
+- 🏠 Home page with hero section, product and special offers
 - 🛍️ Product categories (Men's, Women's, Kids)
 - 🛒 Shopping cart functionality
 - 👤 User authentication (Login/Signup)
