@@ -5,15 +5,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Shop from './Pages/Shop';
 import Cart from './Pages/Cart';
 import Product from './Pages/product';
-
 import ShopCategory from './Pages/ShopCategory';
 import LoginSignup from './Pages/LoginSignup';
 import Footer from './Components/Footer/Footer';
-
+import { ShopProvider } from './context/ShopContext';
 
 function App() {
   return (
-    <div>
+    <ShopProvider>
       <BrowserRouter>
         <Navbar />
         <Routes>
@@ -25,9 +24,9 @@ function App() {
           <Route path='/cart' element={<Cart />} />
           <Route path='/login' element={<LoginSignup />} />
         </Routes>
-        <Footer/>
+        <Footer />
       </BrowserRouter>
-    </div>
+    </ShopProvider>
   );
 }
 
