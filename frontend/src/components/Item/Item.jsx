@@ -1,14 +1,16 @@
 import React from 'react';
-import './Item.css'; // Make sure this file exists and has styles
+import './Item.css';
 
-const Item = (props) => {
+const Item = ({ name, image, new_price, old_price }) => {
   return (
     <div className='item'>
-      <img src={props.image} alt={props.name || "product"} />
-      <p>{props.name}</p>
-      <div className="item-price">
-        <div className="item-price-new"> ${props.new_price}</div>
-        <div className="item-price-old"> ${props.old_price}</div>
+      <img src={image} alt={name || 'product'} />
+      <p>{name}</p>
+      <div className='item-price'>
+        <div className='item-price-new'>${Number(new_price).toFixed(2)}</div>
+        {old_price && (
+          <div className='item-price-old'>${Number(old_price).toFixed(2)}</div>
+        )}
       </div>
     </div>
   );
