@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+import api from '../api/axios';
 import './Product.css';
 
 const STAR_COUNT = 5;
@@ -20,10 +21,9 @@ const ProductPage = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await fetch(`http://localhost:5000/api/products/${productId}`);
-        const json = await res.json();
-        if (json.success) {
-          setProduct(json.data);
+        const { data } = await api.get(`/products/${productId}`);
+        if (data.success) {
+          setProduct(data.data);
         } else {
           setError('Product not found.');
         }

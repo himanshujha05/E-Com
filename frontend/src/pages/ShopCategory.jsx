@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useShop } from '../context/ShopContext';
+import api from '../api/axios';
 import Item from '../Components/Item/Item';
 import './ShopCategory.css';
 
@@ -12,8 +12,8 @@ const SORT_OPTIONS = [
 ];
 
 const ShopCategory = ({ category }) => {
-  const { loadingProducts } = useShop();
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [sortIndex, setSortIndex] = useState(0);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -26,17 +26,19 @@ const ShopCategory = ({ category }) => {
   useEffect(() => {
     const selected = SORT_OPTIONS[sortIndex];
     const load = async () => {
+      setLoading(true);
       try {
-        const res = await fetch(
-          `http://localhost:5000/api/products?category=${category}&sortBy=${selected.value}&order=${selected.order}&page=${page}&limit=${LIMIT}`
-        );
-        const json = await res.json();
-        if (json.success) {
-          setProducts(json.data);
-          setTotalCount(json.meta.total);
+        const { data } = await api.get('/products', {
+          params: { category, sortBy: selected.value, order: selected.order, page, limit: LIMIT },
+        });
+        if (data.success) {
+          setProducts(data.data);
+          setTotalCount(data.meta.total);
         }
       } catch (err) {
         console.error('Failed to load products', err);
+      } finally {
+        setLoading(false);
       }
     };
     load();
@@ -60,7 +62,7 @@ const ShopCategory = ({ category }) => {
         </div>
       </div>
 
-      {loadingProducts ? (
+      {loading ? (
         <p className='shopcategory-loading'>Loading...</p>
       ) : products.length === 0 ? (
         <p className='shopcategory-loading'>No products found.</p>

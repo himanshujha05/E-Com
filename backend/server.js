@@ -12,9 +12,7 @@ const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
-connectDB();
-
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
@@ -37,5 +35,14 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ success: false, message: 'Internal server error' });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 4000;
+
+const start = async () => {
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`\n✓ Server running on http://localhost:${PORT}`);
+    console.log(`✓ Health check: http://localhost:${PORT}/api/health\n`);
+  });
+};
+
+start();

@@ -2,10 +2,20 @@ const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const Order = require('../models/Order');
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// Lazy-initialize so the server can start without Razorpay keys configured
+let _razorpay = null;
+const getRazorpay = () => {
+  if (!_razorpay) {
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      throw new Error('Razorpay keys are not configured in .env');
+    }
+    _razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+  }
+  return _razorpay;
+};
 
 const createPaymentOrder = async (req, res) => {
   const { orderId } = req.body;
@@ -24,7 +34,7 @@ const createPaymentOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Order already paid' });
     }
 
-    const razorpayOrder = await razorpay.orders.create({
+    const razorpayOrder = await getRazorpay().orders.create({
       amount: Math.round(order.totalPrice * 100),
       currency: 'INR',
       receipt: `receipt_${order._id}`,
