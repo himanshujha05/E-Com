@@ -1,55 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
-import api from '../api/axios';
+import all_product from '../assets/all_product';
 import './Product.css';
 
 const STAR_COUNT = 5;
 
 const ProductPage = () => {
   const { productId } = useParams();
-  const { addToCart } = useShop();
+  const { addToCart, user } = useShop();
+  const navigate = useNavigate();
 
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [added, setAdded] = useState(false);
-  const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const { data } = await api.get(`/products/${productId}`);
-        if (data.success) {
-          setProduct(data.data);
-        } else {
-          setError('Product not found.');
-        }
-      } catch {
-        setError('Failed to load product.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Find product from static data by numeric id
+  const product = all_product.find((p) => String(p.id) === String(productId));
 
-    fetchProduct();
-  }, [productId]);
+  if (!product) {
+    return (
+      <div className='product-loading'>
+        Product not found. <Link to='/'>Go back</Link>
+      </div>
+    );
+  }
 
-  const handleAddToCart = async () => {
-    await addToCart(product._id);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
-  };
-
-  if (loading) return <div className='product-loading'>Loading...</div>;
-  if (error) return <div className='product-loading'>{error} <Link to='/'>Go back</Link></div>;
-
-  const images = product.images?.length > 0 ? product.images : ['/placeholder.png'];
+  const images = [product.image];
   const discount = product.old_price
     ? Math.round(((product.old_price - product.new_price) / product.old_price) * 100)
     : null;
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    // Pass the numeric id so the backend can look it up
+    await addToCart(productId);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
+  };
 
   return (
     <div className='product'>
@@ -59,7 +49,7 @@ const ProductPage = () => {
             <img
               key={i}
               src={img}
-              alt={`${product.name} ${i + 1}`}
+              alt={`${product.name} view ${i + 1}`}
               className={selectedImage === i ? 'active' : ''}
               onClick={() => setSelectedImage(i)}
             />
@@ -75,35 +65,32 @@ const ProductPage = () => {
 
         <div className='product-right-stars'>
           {Array.from({ length: STAR_COUNT }).map((_, i) => (
-            <span key={i} className={i < Math.round(product.ratings) ? 'star filled' : 'star'}>
-              ★
-            </span>
+            <span key={i} className={i < 4 ? 'star filled' : 'star'}>★</span>
           ))}
-          <p>({product.numReviews} reviews)</p>
+          <p>(121 reviews)</p>
         </div>
 
         <div className='product-right-prices'>
-          <div className='product-right-price-new'>${product.new_price.toFixed(2)}</div>
+          <div className='product-right-price-new'>${Number(product.new_price).toFixed(2)}</div>
           {product.old_price && (
-            <div className='product-right-price-old'>${product.old_price.toFixed(2)}</div>
+            <div className='product-right-price-old'>${Number(product.old_price).toFixed(2)}</div>
           )}
           {discount && <span className='product-discount'>{discount}% off</span>}
         </div>
 
-        <p className='product-right-description'>{product.description || 'No description available.'}</p>
+        <p className='product-right-description'>
+          High-quality {product.category === 'kid' ? "kids'" : product.category + "'s"} clothing.
+          Crafted with premium materials for comfort and style.
+        </p>
 
         <p className='product-stock'>
-          {product.stock > 0 ? (
-            <span className='in-stock'>In Stock ({product.stock})</span>
-          ) : (
-            <span className='out-of-stock'>Out of Stock</span>
-          )}
+          <span className='in-stock'>In Stock</span>
         </p>
 
         <button
           className='product-right-btn'
           onClick={handleAddToCart}
-          disabled={product.stock === 0 || added}
+          disabled={added}
         >
           {added ? 'Added to Cart ✓' : 'ADD TO CART'}
         </button>
