@@ -1,145 +1,145 @@
-# 🛍️ E-Com
+# Shopper — E-Commerce App
 
-A modern e-commerce web application built with **React** and **Node.js**.
-This project features product listings, shopping cart functionality, and category-based browsing.
-
----
-
-## 🚀 Featuress
-- 🏠 Home page with hero section, product and special offers
-- 🛍️ Product categories (Men's, Women's, Kids)
-- 🛒 Shopping cart functionality
-- 👤 User authentication (Login/Signup)
-- 📱 Responsive design
-- 🔍 Product browsing and filtering
+A full-stack online clothing store where you can browse products, add them to your cart, and place orders. Built with React on the frontend and Node.js + MongoDB on the backend.
 
 ---
 
-## 🧩 Tech Stack
-| Category | Technology |
-|----------|------------|
-| Frontend | React 19 + Create React App |
-| Routing | React Router DOM v7 |
-| Styling | CSS Modules |
-| State | Context API / Redux (coming soon) |
-| Backend | Node.js + Express (coming soon) |
-| Database | MongoDB / Firebase (coming soon) |
+## What it does
+
+- Browse clothes across Men, Women, and Kids categories
+- Click any product to see details and add it to your cart
+- Create an account or log in to save your cart
+- Checkout and pay via Razorpay
+- Fully responsive — works on mobile and desktop
 
 ---
 
-## 🧰 Setup & Run
+## Tech used
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
+**Frontend** — React, React Router, Context API, Axios, CSS
 
-### Installation
+**Backend** — Node.js, Express, MongoDB, Mongoose, JWT, Razorpay
+
+---
+
+## How to run it locally
+
+You'll need **Node.js** and **Docker** installed.
+
+### 1. Clone the repo
 
 ```bash
-# Clone the repository
 git clone https://github.com/himanshujha05/E-Com.git
 cd E-Com
-
-# Navigate to frontend directory
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm start
-
-# Build for production
-npm run build
 ```
 
-The app will run on `http://localhost:3000`
+### 2. Start MongoDB via Docker
+
+```bash
+docker run -d --name shopper-mongo -p 27017:27017 mongo:7
+```
+
+### 3. Set up the backend
+
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` file inside `backend/`:
+
+```
+PORT=4000
+MONGO_URI=mongodb://localhost:27017/shopper
+JWT_SECRET=your_secret_here
+RAZORPAY_KEY_ID=your_key_here
+RAZORPAY_KEY_SECRET=your_secret_here
+CLIENT_URL=http://localhost:3000
+```
+
+Seed the database with products and an admin account:
+
+```bash
+node seed.js
+```
+
+Start the backend:
+
+```bash
+npm run dev
+```
+
+Backend runs on `http://localhost:4000`
+
+### 4. Start the frontend
+
+```bash
+cd ../frontend
+npm install
+npm start
+```
+
+Frontend runs on `http://localhost:3000`
 
 ---
 
-## 🗂️ Folder Structure
+## Admin account (after seeding)
+
+```
+Email:    admin@shopper.com
+Password: admin123
+```
+
+---
+
+## Project structure
+
 ```
 E-Com/
-├── frontend/
-│   ├── public/
-│   │   ├── index.html
-│   │   └── manifest.json
-│   ├── src/
-│   │   ├── components/       # Reusable UI components
-│   │   │   ├── Navbar/
-│   │   │   ├── Footer/
-│   │   │   ├── Hero/
-│   │   │   ├── Popular/
-│   │   │   ├── Offers/
-│   │   │   ├── NewCollections/
-│   │   │   ├── NewsLetter/
-│   │   │   └── Item/
-│   │   ├── pages/           # Page components
-│   │   │   ├── Shop.jsx
-│   │   │   ├── ShopCategory.jsx
-│   │   │   ├── Product.jsx
-│   │   │   ├── Cart.jsx
-│   │   │   └── LoginSignup.jsx
-│   │   ├── assets/          # Static assets & data
-│   │   │   ├── all_product.js
-│   │   │   ├── data.js
-│   │   │   └── new_collections.js
-│   │   ├── App.js
-│   │   └── index.js
-│   └── package.json
-├── .gitignore
-└── README.md
+├── backend/
+│   ├── controllers/      # Route logic
+│   ├── models/           # MongoDB schemas (User, Product, Cart, Order)
+│   ├── routes/           # API routes
+│   ├── middleware/        # JWT auth, admin check
+│   ├── public/images/    # Product images served as static files
+│   ├── seed.js           # Seeds 36 products + admin user
+│   └── server.js         # Entry point
+│
+└── frontend/
+    ├── src/
+    │   ├── api/           # Axios instance with auth headers
+    │   ├── context/       # ShopContext — cart, user, products
+    │   ├── components/    # Navbar, Hero, Item, etc.
+    │   ├── pages/         # Shop, Cart, Product, LoginSignup
+    │   └── assets/        # Product data and images
+    └── public/            # Static product PNGs
 ```
 
 ---
 
-## 🛣️ Routes
-- `/` - Home page (Shop)
-- `/mens` - Men's category
-- `/womens` - Women's category
-- `/kids` - Kids category
-- `/product/:productId` - Individual product page
-- `/cart` - Shopping cart
-- `/login` - Login/Signup page
+## API endpoints
+
+| Method | Endpoint | What it does |
+|--------|----------|--------------|
+| POST | `/api/auth/register` | Create account |
+| POST | `/api/auth/login` | Log in, get JWT |
+| GET | `/api/products` | List all products |
+| GET | `/api/products/:id` | Single product |
+| GET | `/api/cart` | Get your cart |
+| POST | `/api/cart` | Add item to cart |
+| DELETE | `/api/cart/:id` | Remove item |
+| POST | `/api/payment/order` | Create Razorpay order |
+| POST | `/api/payment/verify` | Verify payment |
+| GET | `/api/orders` | Your order history |
 
 ---
 
-## 📦 Available Scripts
+## Author
 
-In the `frontend` directory:
-
-- `npm start` - Runs the app in development mode
-- `npm test` - Launches the test runner
-- `npm run build` - Builds the app for production
-- `npm run eject` - Ejects from Create React App (one-way operation)
+**Himanshu Jha** — [@himanshujha05](https://github.com/himanshujha05)
 
 ---
 
-## 🚧 Coming Soon
-- Backend API with Node.js & Express
-- Database integration (MongoDB)
-- User authentication & authorization
-- Product search functionality
-- Payment gateway integration
-- Admin dashboard
-- Order management
+## License
 
----
-
-## 📝 License
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-## 👤 Author
-**Himanshu Jha**
-- GitHub: [@himanshujha05](https://github.com/himanshujha05)
-
-## 🧠 Roadmap
-- [ ] Complete product listing page
-- [ ] Add cart and checkout logic
-- [ ] Integrate backend API
-- [ ] Deploy to Vercel / Netlify
-
-## 📄 License
-MIT License © 2025 Himanshu Jha
+MIT
